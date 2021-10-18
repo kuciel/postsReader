@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/main_screen">
+    <fragment
+        android:id="@+id/main_screen"
+        android:name="com.andysworkshop.postsreader.mainscreen.MainScreenFragment"
+        tools:layout="@layout/fragment_main_screen"
+        >
+    </fragment>
+</navigation>
