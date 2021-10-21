@@ -6,12 +6,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.andysworkshop.postsreader.databinding.FragmentMainScreenBinding
 
-import com.andysworkshop.postsreader.mainscreen.placeholder.PlaceholderContent.PlaceholderItem
-
-/**
- * [RecyclerView.Adapter] that can display a [PlaceholderItem].
- * TODO: Replace the implementation with code for your data type.
- */
 class MainScreenRecyclerViewAdapter(
     private val values: List<PostListData>
 ) : RecyclerView.Adapter<MainScreenRecyclerViewAdapter.ViewHolder>() {
