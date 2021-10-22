@@ -12,7 +12,7 @@ interface PostDao {
     fun getAll(): List<Post>
 
     @Insert
-    fun insertAll(vararg posts: Post)
+    fun insertAll(posts: List<Post>)
 
     @Query("DELETE FROM post")
     fun deleteAll()

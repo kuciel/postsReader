@@ -3,6 +3,7 @@ package com.andysworkshop.postsreader.di
 import android.app.Application
 import android.content.Context
 import com.andysworkshop.postsreader.PostsReaderApplication
+import com.andysworkshop.postsreader.database.di.DatabaseModule
 import com.andysworkshop.postsreader.mainscreen.di.FragmentModule
 import com.andysworkshop.postsreader.mainscreen.di.MainScreenModule
 import com.andysworkshop.postsreader.model.di.StoreModule
@@ -21,7 +22,8 @@ import javax.inject.Singleton
         MainScreenModule::class,
         NetworkModule::class,
         StoreModule::class,
-        ContextModule::class
+        ContextModule::class,
+        DatabaseModule::class
     ]
 )
 
