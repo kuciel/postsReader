@@ -2,6 +2,7 @@ package com.andysworkshop.postsreader.model
 
 import com.andysworkshop.postsreader.database.PostsReaderDatabase
 import com.andysworkshop.postsreader.database.entities.Post
+import com.andysworkshop.postsreader.database.entities.User
 import com.andysworkshop.postsreader.networking.INetworkInterface
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,16 +27,24 @@ class Store @Inject constructor(
             return _postsData
         }
 
-    override fun refreshPostsData(scope: CoroutineScope): Boolean {
-        getPostsDataFromDB()
+    override fun refreshData(scope: CoroutineScope) {
         scope.launch(Dispatchers.IO) {
             refreshPostDataFromServer()
         }
-        return true
     }
 
-    override suspend fun getUserByUserId(scope: CoroutineScope, userId: String): UsersData {
-        return networkInterface.requestUserData(userId)
+    override fun requestPostsData(scope: CoroutineScope) {
+        scope.launch(Dispatchers.IO) {
+            getPostsDataFromDB()
+        }
+    }
+
+    override suspend fun getUserById(scope: CoroutineScope, userId: String): UsersData {
+        val user = postsReaderDb.userDao().getUserNameById(userId)
+        return UsersData(
+            name = user.name,
+            id = user.id
+        )
     }
 
     private fun getPostsDataFromDB(){
@@ -62,6 +71,15 @@ class Store @Inject constructor(
             )
         }
         postsReaderDb.postDao().insertAll(postEntities)
+        postData.forEach {
+            postData ->
+                val userData = networkInterface.requestUserData(postData.userId)
+                postsReaderDb.userDao().insert(
+                    User(
+                        name = userData.name,
+                        id = userData.id
+                    ))
+        }
         _postsData.tryEmit(postData)
     }
 }

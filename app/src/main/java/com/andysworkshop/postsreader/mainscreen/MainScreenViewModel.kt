@@ -6,41 +6,48 @@ import androidx.lifecycle.viewModelScope
 import com.andysworkshop.postsreader.model.IStore
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class MainScreenViewModel @Inject constructor(private val store: IStore) : ViewModel() {
 
     val postListData = MutableLiveData<List<PostListData>>()
 
-    init {
-        setupPostsUpdater()
-    }
-
     fun fragmentResumed() {
-        setupPostsUpdater()
-        requestPostData()
+        setupPostsDataObserver()
+        getCachedPostsData()
+        refreshPostData()
     }
 
-    private fun setupPostsUpdater() {
-        viewModelScope.launch(Main) {
-            store.postsData.onEach { postData ->
-                postListData.value = postData.map {
-                    PostListData(
-                        title = it.title,
-                        userName = store.getUserByUserId(viewModelScope, it.userId).name
-                    )
+    private fun setupPostsDataObserver() {
+        store.postsData.onEach { postData ->
+            postData.map {
+                PostListData(
+                    title = it.title,
+                    userName = store.getUserById(viewModelScope, it.userId).name
+                )
+            }.also { parsedPostsList ->
+                withContext(Main) {
+                    postListData.value = parsedPostsList
                 }
             }
-                .launchIn(viewModelScope)
+        }.flowOn(IO)
+            .launchIn(viewModelScope)
+    }
+
+    private fun getCachedPostsData() {
+        viewModelScope.launch(IO) {
+            store.requestPostsData(viewModelScope)
         }
     }
 
-    private fun requestPostData() {
+    private fun refreshPostData() {
         viewModelScope.launch(IO) {
-            store.refreshPostsData(viewModelScope)
+            store.refreshData(viewModelScope)
         }
     }
 }

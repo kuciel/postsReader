@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.SharedFlow
 
 interface IStore {
     val postsData: SharedFlow<List<PostData>>
-    fun refreshPostsData(scope: CoroutineScope): Boolean
-    suspend fun getUserByUserId(scope: CoroutineScope, userId: String): UsersData
+    fun requestPostsData(scope: CoroutineScope)
+    suspend fun getUserById(scope: CoroutineScope, userId: String): UsersData
+    fun refreshData(scope: CoroutineScope)
 }
