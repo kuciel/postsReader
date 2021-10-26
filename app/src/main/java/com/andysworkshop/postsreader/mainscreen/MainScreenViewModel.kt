@@ -4,13 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.andysworkshop.postsreader.model.IStore
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class MainScreenViewModel @Inject constructor(private val store: IStore) : ViewModel() {
@@ -28,26 +23,19 @@ class MainScreenViewModel @Inject constructor(private val store: IStore) : ViewM
             postData.map {
                 PostListData(
                     title = it.title,
-                    userName = store.getUserById(viewModelScope, it.userId).name
+                    userName = it.userName
                 )
             }.also { parsedPostsList ->
-                withContext(Main) {
-                    postListData.value = parsedPostsList
-                }
+                postListData.value = parsedPostsList
             }
-        }.flowOn(IO)
-            .launchIn(viewModelScope)
+        }.launchIn(viewModelScope)
     }
 
     private fun getCachedPostsData() {
-        viewModelScope.launch(IO) {
-            store.requestPostsData(viewModelScope)
-        }
+        store.requestPostsData(viewModelScope)
     }
 
     private fun refreshPostData() {
-        viewModelScope.launch(IO) {
-            store.refreshData(viewModelScope)
-        }
+        store.refreshData(viewModelScope)
     }
 }

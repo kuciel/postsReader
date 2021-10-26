@@ -39,7 +39,7 @@ class Store @Inject constructor(
         }
     }
 
-    override suspend fun getUserById(scope: CoroutineScope, userId: String): UsersData {
+    private fun getUserById(userId: String): UsersData {
         val user = postsReaderDb.userDao().getUserNameById(userId)
         return UsersData(
             name = user.name,
@@ -54,7 +54,8 @@ class Store @Inject constructor(
                 id = it.id,
                 title = it.title,
                 body = it.body,
-                userId = it.userId
+                userId = it.userId,
+                userName = getUserById(it.userId).name
             )
         })
     }
@@ -74,6 +75,7 @@ class Store @Inject constructor(
         postData.forEach {
             postData ->
                 val userData = networkInterface.requestUserData(postData.userId)
+                postData.userName = userData.name
                 postsReaderDb.userDao().insert(
                     User(
                         name = userData.name,
