@@ -1,7 +1,6 @@
 package com.andysworkshop.postsreader.networking
 
-import com.andysworkshop.postsreader.model.PostData
-import com.andysworkshop.postsreader.model.UsersData
+import com.andysworkshop.postsreader.model.*
 
 import javax.inject.Inject
 
@@ -9,18 +8,26 @@ class Network @Inject constructor(
     private val apiInterface: IRetrofitApiInterface
 ) : INetworkInterface {
 
-    override suspend fun requestPostsData(): List<PostData> {
-        return apiInterface.getPosts().map {
-            PostData(
-                title = it.title,
-                body = it.body,
-                id = it.id,
-                userId = it.userId
-            )
+    override suspend fun requestPostsData(): PostsDataRequestResult {
+        return try {
+            PostsDataRequestResult.Success(apiInterface.getPosts().map {
+                PostData(
+                    title = it.title,
+                    body = it.body,
+                    id = it.id,
+                    userId = it.userId
+                )
+            })
+        } catch (error: Throwable) {
+            return PostsDataRequestResult.Error(error.message ?: "unknown error")
         }
     }
 
-    override suspend fun requestUserData(id: String): UsersData {
-        return apiInterface.getUsersById(id)
+    override suspend fun requestUserData(id: String): UserDataRequestResult {
+        return try {
+            UserDataRequestResult.Success(apiInterface.getUsersById(id))
+        } catch (error: Throwable) {
+            return UserDataRequestResult.Error(error.message ?: "unknown error")
+        }
     }
 }

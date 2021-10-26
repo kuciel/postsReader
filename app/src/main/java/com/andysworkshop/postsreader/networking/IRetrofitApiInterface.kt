@@ -1,7 +1,6 @@
 package com.andysworkshop.postsreader.networking
 
-import com.andysworkshop.postsreader.model.UsersData
-import retrofit2.Call
+import com.andysworkshop.postsreader.model.UserData
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -13,7 +12,7 @@ interface IRetrofitApiInterface {
     suspend fun getPosts(): List<PostsResponseDto>
 
     @GET("users/{id}")
-    suspend fun getUsersById(@Path(value="id") id: String): UsersData
+    suspend fun getUsersById(@Path(value="id") id: String): UserData
 
     companion object {
         private const val BASE_URL = "https://jsonplaceholder.typicode.com/"

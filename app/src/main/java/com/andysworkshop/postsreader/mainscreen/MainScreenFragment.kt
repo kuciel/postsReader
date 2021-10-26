@@ -6,15 +6,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import android.widget.Toast.LENGTH_LONG
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.andysworkshop.postsreader.databinding.FragmentMainScreenListBinding
 import dagger.android.support.AndroidSupportInjection
 import javax.inject.Inject
 
-/**
- * A fragment representing a list of Items.
- */
 class MainScreenFragment : Fragment() {
 
     private val listData : MutableList<PostListData> = mutableListOf()
@@ -27,10 +26,13 @@ class MainScreenFragment : Fragment() {
 
     private fun setupDataObserver() {
         viewModel.postListData.observe(viewLifecycleOwner, {
-            println("Observer $it")
             listData.clear()
             listData.addAll(it)
             recyclerViewAdapter.notifyDataSetChanged()
+        })
+
+        viewModel.errorMessage.observe(viewLifecycleOwner, {
+            Toast.makeText(context, it, LENGTH_LONG).show()
         })
     }
 

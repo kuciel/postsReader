@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.andysworkshop.postsreader.model.IStore
+import com.andysworkshop.postsreader.model.PostsDataRequestResult
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
@@ -11,6 +12,7 @@ import javax.inject.Inject
 class MainScreenViewModel @Inject constructor(private val store: IStore) : ViewModel() {
 
     val postListData = MutableLiveData<List<PostListData>>()
+    val errorMessage = MutableLiveData<String>()
 
     fun fragmentResumed() {
         setupPostsDataObserver()
@@ -19,14 +21,20 @@ class MainScreenViewModel @Inject constructor(private val store: IStore) : ViewM
     }
 
     private fun setupPostsDataObserver() {
-        store.postsData.onEach { postData ->
-            postData.map {
-                PostListData(
-                    title = it.title,
-                    userName = it.userName
-                )
-            }.also { parsedPostsList ->
-                postListData.value = parsedPostsList
+        store.postsData.onEach { postDataResult ->
+            when(postDataResult) {
+                is PostsDataRequestResult.Success -> {
+                    postDataResult.value.map {
+                        PostListData(
+                            title = it.title,
+                            userName = it.userName
+                        )
+                    }.also { parsedPostsList ->
+                        postListData.value = parsedPostsList
+                    }
+                }
+                is PostsDataRequestResult.Error ->
+                    errorMessage.value = postDataResult.message
             }
         }.launchIn(viewModelScope)
     }
