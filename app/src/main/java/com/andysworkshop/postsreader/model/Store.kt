@@ -1,9 +1,6 @@
 package com.andysworkshop.postsreader.model
 
 import com.andysworkshop.postsreader.database.IDatabaseInterface
-import com.andysworkshop.postsreader.database.PostsReaderDatabase
-import com.andysworkshop.postsreader.database.entities.Post
-import com.andysworkshop.postsreader.database.entities.User
 import com.andysworkshop.postsreader.networking.INetworkInterface
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

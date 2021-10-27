@@ -3,13 +3,18 @@ package com.andysworkshop.postsreader.mainscreen
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.andysworkshop.postsreader.model.IStore
-import com.andysworkshop.postsreader.model.PostsDataRequestResult
+import com.andysworkshop.postsreader.mainscreen.usecases.IGetCachedPostsDataUseCase
+import com.andysworkshop.postsreader.mainscreen.usecases.IGetPostsDataFlowUseCase
+import com.andysworkshop.postsreader.mainscreen.usecases.IRefreshPostsDataUseCase
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
-class MainScreenViewModel @Inject constructor(private val store: IStore) : ViewModel() {
+class MainScreenViewModel @Inject constructor(
+    private val getCachedPostsDataUseCase: IGetCachedPostsDataUseCase,
+    private val refreshPostsDataUseCase: IRefreshPostsDataUseCase,
+    private val getPostsDataFlowUseCase: IGetPostsDataFlowUseCase
+) : ViewModel() {
 
     val postListData = MutableLiveData<List<PostListData>>()
     val errorMessage = MutableLiveData<String>()
@@ -21,29 +26,22 @@ class MainScreenViewModel @Inject constructor(private val store: IStore) : ViewM
     }
 
     private fun setupPostsDataObserver() {
-        store.postsData.onEach { postDataResult ->
-            when(postDataResult) {
-                is PostsDataRequestResult.Success -> {
-                    postDataResult.value.map {
-                        PostListData(
-                            title = it.title,
-                            userName = it.userName
-                        )
-                    }.also { parsedPostsList ->
-                        postListData.value = parsedPostsList
-                    }
+        getPostsDataFlowUseCase.invoke(viewModelScope).onEach { postDataListResult ->
+            when (postDataListResult) {
+                is PostListDataResult.Success -> {
+                    postListData.value = postDataListResult.value
                 }
-                is PostsDataRequestResult.Error ->
-                    errorMessage.value = postDataResult.message
+                is PostListDataResult.Error ->
+                    errorMessage.value = postDataListResult.message
             }
         }.launchIn(viewModelScope)
     }
 
     private fun getCachedPostsData() {
-        store.requestPostsData(viewModelScope)
+        getCachedPostsDataUseCase.invoke(viewModelScope)
     }
 
     private fun refreshPostData() {
-        store.refreshData(viewModelScope)
+        refreshPostsDataUseCase.invoke(viewModelScope)
     }
 }
