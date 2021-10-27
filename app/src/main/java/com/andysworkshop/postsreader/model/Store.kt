@@ -1,5 +1,6 @@
 package com.andysworkshop.postsreader.model
 
+import com.andysworkshop.postsreader.database.IDatabaseInterface
 import com.andysworkshop.postsreader.database.PostsReaderDatabase
 import com.andysworkshop.postsreader.database.entities.Post
 import com.andysworkshop.postsreader.database.entities.User
@@ -14,7 +15,7 @@ import javax.inject.Inject
 
 class Store @Inject constructor(
     private val networkInterface: INetworkInterface,
-    private val postsReaderDb: PostsReaderDatabase
+    private val databaseInterface: IDatabaseInterface
 ) : IStore {
 
     private val _postsData = MutableSharedFlow<PostsDataRequestResult>(
@@ -39,61 +40,19 @@ class Store @Inject constructor(
         }
     }
 
-    private fun getUserById(userId: String): UserData {
-        return try {
-            val user = postsReaderDb.userDao().getUserNameById(userId)
-            UserData(
-                name = user.name,
-                id = user.id
-            )
-        } catch (error: Throwable) {
-            UserData(
-                name = "Unknown",
-                id = userId
-            )
-        }
-    }
-
     private fun getPostsDataFromDB() {
-         try {
-            val postsFromDB = postsReaderDb.postDao().getAll()
             _postsData.tryEmit(
-                PostsDataRequestResult.Success(
-                    postsFromDB.map {
-                        PostData(
-                            id = it.id,
-                            title = it.title,
-                            body = it.body,
-                            userId = it.userId,
-                            userName = getUserById(it.userId).name
-                        )
-                    })
+                databaseInterface.getAllPosts()
             )
-        } catch (error: Throwable) {
-            _postsData.tryEmit(
-                PostsDataRequestResult.Error(error.message?: "Unknown error")
-            )
-        }
     }
 
     private suspend fun onRequestPostDataSuccess(postsListData: List<PostData>) {
-        postsReaderDb.postDao().deleteAll()
-        val postEntities: List<Post> = postsListData.map {
-            Post(
-                id = it.id,
-                title = it.title,
-                body = it.body,
-                userId = it.userId
-            )
-        }
-        postsReaderDb.postDao().insertAll(postEntities)
+        databaseInterface.insertPosts(postsListData)
         postsListData.forEach { post ->
             when (val userDataResult = networkInterface.requestUserData(post.userId)) {
                 is UserDataRequestResult.Success -> {
                     post.userName = userDataResult.value.name
-                    postsReaderDb.userDao().insert(
-                        User(name = userDataResult.value.name, id = userDataResult.value.id)
-                    )
+                    databaseInterface.insertUser(userDataResult.value)
                 }
                 is UserDataRequestResult.Error -> {
                     _postsData.tryEmit(PostsDataRequestResult.Error(userDataResult.message))
