@@ -1,6 +1,6 @@
 package com.andysworkshop.postsreader.networking
 
-import com.andysworkshop.postsreader.model.UserData
+import com.andysworkshop.postsreader.domain.data.UserData
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET

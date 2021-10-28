@@ -1,6 +1,6 @@
 package com.andysworkshop.postsreader.networking
 
-import com.andysworkshop.postsreader.model.*
+import com.andysworkshop.postsreader.domain.data.*
 
 import javax.inject.Inject
 

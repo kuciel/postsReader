@@ -2,9 +2,9 @@ package com.andysworkshop.postsreader.database
 
 import com.andysworkshop.postsreader.database.entities.Post
 import com.andysworkshop.postsreader.database.entities.User
-import com.andysworkshop.postsreader.model.PostData
-import com.andysworkshop.postsreader.model.PostsDataRequestResult
-import com.andysworkshop.postsreader.model.UserData
+import com.andysworkshop.postsreader.domain.data.PostData
+import com.andysworkshop.postsreader.domain.data.PostsDataRequestResult
+import com.andysworkshop.postsreader.domain.data.UserData
 import javax.inject.Inject
 
 class DatabaseImpl @Inject constructor(

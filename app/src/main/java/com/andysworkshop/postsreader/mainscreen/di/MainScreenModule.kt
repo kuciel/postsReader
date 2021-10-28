@@ -5,7 +5,6 @@ import com.andysworkshop.postsreader.di.PostReaderViewModelFactory
 import com.andysworkshop.postsreader.mainscreen.usecases.IGetCachedPostsDataUseCase
 import com.andysworkshop.postsreader.mainscreen.usecases.IGetPostsDataFlowUseCase
 import com.andysworkshop.postsreader.mainscreen.usecases.IRefreshPostsDataUseCase
-import com.andysworkshop.postsreader.model.IStore
 import dagger.Module
 import dagger.Provides
 

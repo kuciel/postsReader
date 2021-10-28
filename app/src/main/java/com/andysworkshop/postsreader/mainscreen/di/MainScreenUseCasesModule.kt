@@ -5,7 +5,7 @@ import dagger.Binds
 import dagger.Module
 
 @Module
-abstract class UseCasesModule {
+abstract class MainScreenUseCasesModule {
     @Binds
     abstract fun bindRefreshPostsDataUseCse(getCachedPostsDataUseCase: GetCachedPostsDataUseCase): IGetCachedPostsDataUseCase
 

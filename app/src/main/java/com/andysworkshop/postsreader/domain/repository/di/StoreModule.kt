@@ -1,7 +1,7 @@
-package com.andysworkshop.postsreader.model.di
+package com.andysworkshop.postsreader.domain.repository.di
 
-import com.andysworkshop.postsreader.model.IStore
-import com.andysworkshop.postsreader.model.Store
+import com.andysworkshop.postsreader.domain.repository.IStore
+import com.andysworkshop.postsreader.domain.repository.Store
 import dagger.Binds
 import dagger.Module
 import javax.inject.Singleton

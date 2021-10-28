@@ -5,9 +5,10 @@ import com.andysworkshop.postsreader.PostsReaderApplication
 import com.andysworkshop.postsreader.database.di.DatabaseModule
 import com.andysworkshop.postsreader.mainscreen.di.FragmentModule
 import com.andysworkshop.postsreader.mainscreen.di.MainScreenModule
-import com.andysworkshop.postsreader.model.di.StoreModule
+import com.andysworkshop.postsreader.domain.repository.di.StoreModule
 import com.andysworkshop.postsreader.networking.di.NetworkModule
-import com.andysworkshop.postsreader.mainscreen.di.UseCasesModule
+import com.andysworkshop.postsreader.mainscreen.di.MainScreenUseCasesModule
+import com.andysworkshop.postsreader.networking.di.NetworkUseCasesModule
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
@@ -24,7 +25,8 @@ import javax.inject.Singleton
         StoreModule::class,
         ContextModule::class,
         DatabaseModule::class,
-        UseCasesModule::class
+        MainScreenUseCasesModule::class,
+        NetworkUseCasesModule::class
     ]
 )
 

@@ -2,8 +2,8 @@ package com.andysworkshop.postsreader.mainscreen.usecases
 
 import com.andysworkshop.postsreader.mainscreen.PostListData
 import com.andysworkshop.postsreader.mainscreen.PostListDataResult
-import com.andysworkshop.postsreader.model.IStore
-import com.andysworkshop.postsreader.model.PostsDataRequestResult
+import com.andysworkshop.postsreader.domain.repository.IStore
+import com.andysworkshop.postsreader.domain.data.PostsDataRequestResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
