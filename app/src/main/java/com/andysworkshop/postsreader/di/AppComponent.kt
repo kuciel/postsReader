@@ -3,6 +3,7 @@ package com.andysworkshop.postsreader.di
 import android.app.Application
 import com.andysworkshop.postsreader.PostsReaderApplication
 import com.andysworkshop.postsreader.database.di.DatabaseModule
+import com.andysworkshop.postsreader.database.di.DatabaseUseCasesModule
 import com.andysworkshop.postsreader.mainscreen.di.FragmentModule
 import com.andysworkshop.postsreader.mainscreen.di.MainScreenModule
 import com.andysworkshop.postsreader.domain.repository.di.StoreModule
@@ -26,7 +27,8 @@ import javax.inject.Singleton
         ContextModule::class,
         DatabaseModule::class,
         MainScreenUseCasesModule::class,
-        NetworkUseCasesModule::class
+        NetworkUseCasesModule::class,
+        DatabaseUseCasesModule::class
     ]
 )
 

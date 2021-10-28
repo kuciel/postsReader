@@ -1,11 +1,13 @@
 package com.andysworkshop.postsreader.domain.repository
 
-import com.andysworkshop.postsreader.database.IDatabaseInterface
+import com.andysworkshop.postsreader.database.usecases.GetPostsFromDBUseCase
+import com.andysworkshop.postsreader.database.usecases.InsertPostsToDBUseCase
+import com.andysworkshop.postsreader.database.usecases.InsertUserToDBUseCase
 import com.andysworkshop.postsreader.domain.data.PostData
 import com.andysworkshop.postsreader.domain.data.PostsDataRequestResult
 import com.andysworkshop.postsreader.domain.data.UserDataRequestResult
 import com.andysworkshop.postsreader.domain.usecases.IGetPostsFromRemoteUseCase
-import com.andysworkshop.postsreader.networking.usecases.GetUserFromRemoteUseCase
+import com.andysworkshop.postsreader.domain.usecases.IGetUserFromRemoteUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
@@ -16,8 +18,10 @@ import javax.inject.Inject
 
 class Store @Inject constructor(
     private val getPostsFromRemoteUseCase: IGetPostsFromRemoteUseCase,
-    private val getUserFromRemoteUseCase: GetUserFromRemoteUseCase,
-    private val databaseInterface: IDatabaseInterface
+    private val getUserFromRemoteUseCase: IGetUserFromRemoteUseCase,
+    private val getPostsFromDBUseCase: GetPostsFromDBUseCase,
+    private val insertUserToDBUseCase: InsertUserToDBUseCase,
+    private val insertPostsToDBUseCase: InsertPostsToDBUseCase
 ) : IStore {
 
     private val _postsData = MutableSharedFlow<PostsDataRequestResult>(
@@ -44,17 +48,17 @@ class Store @Inject constructor(
 
     private fun getPostsDataFromDB() {
             _postsData.tryEmit(
-                databaseInterface.getAllPosts()
+                getPostsFromDBUseCase.invoke()
             )
     }
 
     private suspend fun onRequestPostDataSuccess(postsListData: List<PostData>) {
-        databaseInterface.insertPosts(postsListData)
+        insertPostsToDBUseCase.invoke(postsListData)
         postsListData.forEach { post ->
             when (val userDataResult = getUserFromRemoteUseCase.invoke(post.userId)) {
                 is UserDataRequestResult.Success -> {
                     post.userName = userDataResult.value.name
-                    databaseInterface.insertUser(userDataResult.value)
+                    insertUserToDBUseCase.invoke(userDataResult.value)
                 }
                 is UserDataRequestResult.Error -> {
                     _postsData.tryEmit(PostsDataRequestResult.Error(userDataResult.message))

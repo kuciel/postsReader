@@ -11,21 +11,6 @@ class DatabaseImpl @Inject constructor(
     private val postsReaderDb: PostsReaderDatabase
 ) : IDatabaseInterface {
 
-    override fun getUserNameById(userId: String): UserData {
-        return try {
-            val user = postsReaderDb.userDao().getUserNameById(userId)
-            UserData(
-                name = user.name,
-                id = user.id
-            )
-        } catch (error: Throwable) {
-            UserData(
-                name = "Unknown",
-                id = userId
-            )
-        }
-    }
-
     override fun getAllPosts(): PostsDataRequestResult {
         return try {
             val postsFromDB = postsReaderDb.postDao().getAll()
@@ -64,5 +49,20 @@ class DatabaseImpl @Inject constructor(
         postsReaderDb.userDao().insert(
             User(name = userData.name, id = userData.id)
         )
+    }
+
+    private fun getUserNameById(userId: String): UserData {
+        return try {
+            val user = postsReaderDb.userDao().getUserNameById(userId)
+            UserData(
+                name = user.name,
+                id = user.id
+            )
+        } catch (error: Throwable) {
+            UserData(
+                name = "Unknown",
+                id = userId
+            )
+        }
     }
 }
