@@ -8,12 +8,11 @@ import com.andysworkshop.postsreader.domain.data.PostsDataRequestResult
 import com.andysworkshop.postsreader.domain.data.UserDataRequestResult
 import com.andysworkshop.postsreader.domain.usecases.IGetPostsFromRemoteUseCase
 import com.andysworkshop.postsreader.domain.usecases.IGetUserFromRemoteUseCase
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class Store @Inject constructor(
@@ -34,14 +33,14 @@ class Store @Inject constructor(
             return _postsData
         }
 
-    override fun refreshData(scope: CoroutineScope) {
-        scope.launch(Dispatchers.IO) {
+    override suspend fun refreshData() {
+        withContext(Dispatchers.IO) {
             refreshPostDataFromServer()
         }
     }
 
-    override fun requestPostsData(scope: CoroutineScope) {
-        scope.launch(Dispatchers.IO) {
+    override suspend fun requestPostsData() {
+        withContext(Dispatchers.IO) {
             getPostsDataFromDB()
         }
     }

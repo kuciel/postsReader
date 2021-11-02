@@ -6,8 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.andysworkshop.postsreader.mainscreen.usecases.IGetCachedPostsDataUseCase
 import com.andysworkshop.postsreader.mainscreen.usecases.IGetPostsDataFlowUseCase
 import com.andysworkshop.postsreader.mainscreen.usecases.IRefreshPostsDataUseCase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MainScreenViewModel @Inject constructor(
@@ -38,10 +40,14 @@ class MainScreenViewModel @Inject constructor(
     }
 
     private fun getCachedPostsData() {
-        getCachedPostsDataUseCase.invoke(viewModelScope)
+        viewModelScope.launch(Dispatchers.IO) {
+            getCachedPostsDataUseCase.invoke()
+        }
     }
 
     private fun refreshPostData() {
-        refreshPostsDataUseCase.invoke(viewModelScope)
+        viewModelScope.launch(Dispatchers.IO) {
+            refreshPostsDataUseCase.invoke()
+        }
     }
 }
